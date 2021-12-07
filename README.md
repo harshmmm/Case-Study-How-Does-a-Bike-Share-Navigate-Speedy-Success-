@@ -32,3 +32,5 @@ downloaded files to the appropriate subfolder.
 7. Proceed to the analyze step.
 
 8. I have saved each file as <monthname>.csv (for example- jan.csv)
+
+ The results of analysis as visualizations are in the repository saved as images
