@@ -1,0 +1,328 @@
+---
+title: "Cyclistic Data Analysis"
+author: "Harsh Malik"
+date: "12/7/2021"
+output:
+  html_document: default
+---
+### Data: 'Sophisticated, Clear, and Polished': Divvy and Data Visualization written by Kevin Hartman
+### Business Problem: How do annual members and casual riders use Cyclistic bikes differently?
+
+We have been tasked with comparing trends in relation to two customer types the Cyclistic Bike Rental services have.
+The data has been sourced from [here](https://divvy-tripdata.s3.amazonaws.com/index.html).
+
+To begin with our analysis, we need to set up a work space in RStudio first. Lets begin.
+
+
+#### **STEP 1:** Loading the required packages and setting up working directory
+```{r}
+library(tidyverse)  #helps wrangle data
+library(lubridate)  #helps wrangle date attributes
+library(ggplot2)  #helps visualize data
+getwd() #displays your working directory
+setwd("C:/Users/Administrator/Desktop/CASE STUDY 1/csv_data") #sets your working directory 
+```
+
+After setting up a work space and loading all the required packages, we can start working with the data. Lets import the data.
+
+#### **STEP 2:** Importing the data
+```{r}
+
+jan <- read.csv("jan_21.csv")
+feb <- read.csv("feb_21.csv")
+mar <- read.csv("mar_21.csv")
+apr <- read.csv("apr_21.csv")
+may <- read.csv("may_21.csv")
+jun <- read.csv("jun_21.csv")
+jul <- read.csv("jul_21.csv")
+aug <- read.csv("aug_21.csv")
+sep <- read.csv("sep_21.csv")
+oct <- read.csv("oct_21.csv")
+
+```
+
+Now that the data has been imported, we can start with 'Data Preparation' phase of the analysis process. Lets start with renaming columns to make all the different data sets consistent and ready to merge.
+
+#### **STEP 3:** Preparation of Data
+
+```{r}
+jan <- rename(jan,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+feb <- rename(feb,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+mar <- rename(mar,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+apr <- rename(apr,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+may <- rename(may,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+jun <- rename(jun,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+jul <- rename(jul,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+aug <- rename(aug,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+sep <- rename(sep,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+
+oct <- rename(oct,
+               trip_id = ride_id
+               ,bike_id = rideable_type
+               ,start_time = started_at
+               ,end_time = ended_at
+               ,user_type = member_casual)
+```
+
+Now, as we know that *trip_id* and *bike_id* are in text format in the parent data set, lets convert the both columns into **chr** datatype
+
+#### **STEP 4:** Data Preparation Continued
+
+```{r}
+#store trip_id and bike_id as character data type
+
+jan <-  mutate(jan, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+feb <-  mutate(feb, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+mar <-  mutate(mar, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+apr <-  mutate(apr, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+may <-  mutate(may, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+jun <-  mutate(jun, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+jul <-  mutate(jul, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+aug <-  mutate(aug, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+sep <-  mutate(sep, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+oct <-  mutate(oct, trip_id = as.character(trip_id)
+               ,bike_id = as.character(bike_id)) 
+
+```
+
+Now that we have acquired consistency over all data sets, we can merge them all for annual analysis.
+
+#### **STEP 5:** Merging Data Sets
+
+```{r}
+
+trips_df <- bind_rows(jan,feb,mar,apr,jun,may,jul,aug,sep,oct)
+trips_df <- trips_df %>% 
+  select(-c(start_lat, start_lng, end_lat, end_lng)) #because we do not require latitude and longitude data, we can remove it from the database
+```
+
+Now lets take a look at our data set
+```{r}
+View(trips_df) #returns the data set in a spreadsheet format
+str(trips_df) #returns the structure of the data set i.e. the column names and data type stored
+summary(trips_df) #returns the summary of the data set i.e. column names, data type, and metrics like mean, median, max and min of numeric or date-time values
+```
+
+After looking at the summary, we realize that the date-time columns are stored as **chr** values. For accurate analysis we need our data to be clean, accurate and most precise, in correct format.
+So lets start with formatting correct data types.
+
+#### **STEP 6:** Cleaning/ Correcting Data
+
+```{r}
+trips_df$day_of_week <- format(as.Date(trips_df$day_of_week, origin=lubridate::origin),"%A") #converts the number to corresponding day of the week  
+
+trips_df$start_time<- as_datetime(trips_df$start_time, format=("%m/%d/%Y %H:%M")) #converts chr to date-time
+trips_df$end_time<- as_datetime(trips_df$end_time,tz="NULL", format("%m/%d/%Y %H:%M")) #converts chr to date-time
+
+trips_df$ride_length<- difftime(trips_df$end_time,trips_df$start_time, units = "mins") #calculates difference between to given dates and stores as number of minutes
+
+```
+ 
+ Lets check the structure and summary of the data to verify if the changes have been made.
+ 
+```{r}
+str(trips_df)
+summary(trips_df)
+```
+ 
+#### **STEP 7:** Analysis Phase
+
+* Comparing user types w.r.t ride_length
+
+```{r}
+aggregate(trips_df$ride_length ~ trips_df$user_type, FUN = mean)
+aggregate(trips_df$ride_length ~ trips_df$user_type, FUN = median)
+aggregate(trips_df$ride_length ~ trips_df$user_type, FUN = max)
+aggregate(trips_df$ride_length ~ trips_df$user_type, FUN = min)
+```
+
+* Average ride_length vs day of the week for each user type
+
+```{r}
+aggregate(trips_df$ride_length ~ trips_df$user_type + trips_df$day_of_week, FUN = mean)
+trips_df$day_of_week<-ordered(trips_df$day_of_week,levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+
+```
+
+* Grouping by hourly, weekly and monthly factors
+
+```{r}
+weekday_group<- as.data.frame(
+trips_df %>% 
+  mutate(weekday=wday(start_time, label=TRUE)) %>% 
+  group_by(user_type,weekday) %>% 
+  summarise(number_of_rides=n(),
+            avg_duration=mean(ride_length)) %>% 
+  arrange(user_type, weekday)
+)
+View(weekday_group)
+
+
+monthly_group<- as.data.frame(
+trips_df %>% 
+  mutate(mths=month(start_time, label=TRUE)) %>% 
+  group_by(user_type,mths,bike_id) %>% 
+  summarise(number_of_rides=n(),
+            avg_duration=mean(ride_length)) %>% 
+  arrange(user_type, mths,bike_id)
+)
+View(monthly_group)
+
+
+hourly_group<- as.data.frame(
+trips_df %>% 
+  mutate(hrs=hour(start_time)) %>% 
+  group_by(user_type,hrs) %>% 
+  summarise(number_of_rides=n(),
+            avg_duration=mean(ride_length)) %>% 
+  arrange(user_type, hrs))
+View(hourly_group)
+
+```
+
+* Number of users per user-type
+```{r}
+no_of_users <- trips_df %>% 
+  count(user_type)      
+View(no_of_users)
+
+```
+
+Now that we have different data frames with different analytic metrics, we can visualize data for better understanding.
+
+#### **STEP 8:** Visualization
+
+First, we assign different vizzes to different vriables
+```{r}
+hrs_viz<-  ggplot(data=hourly_group)+geom_line(mapping = aes(x=hrs,y=number_of_rides, color=user_type, size=1)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 24, by = 2))
+
+
+
+week_viz<-ggplot(data=weekday_group)+geom_point(mapping = aes(x=weekday,y=number_of_rides, color=user_type,size=1))
+
+
+
+bike_pref_viz<-ggplot(monthly_group)+geom_col(mapping = aes(x=bike_id, y=number_of_rides,fill=user_type))+facet_wrap(~user_type)
+
+
+```
+
+
+Now for a clearer understanding, we need to annotate the vizzes. So,
+
+```{r, out.height='750px', out.width='750px'}
+hrs_viz+
+  labs(title="active hours of cyclistic users", subtitle ="the graphic explains at what hour of the day are the cyclistic users most active", caption = "Data Based on 'Sophisticated, Clear, and Polished': Divvy and Data Visualization written by Kevin Hartman" )+
+  annotate("text", x=8,y=250000, label="Peak Hours are usually around 5pm for both user types", color="black",fontface="italic", size=3.5)
+
+week_viz+
+   labs(title="active weekdays of cyclistic users", subtitle ="the graphic explains which days of the week are busiest for cyclistic users ", caption = "Data Based on 'Sophisticated, Clear, and Polished': Divvy and Data Visualization written by Kevin Hartman" )+
+    annotate("text", x="Wed",y=500000, label="Casuals prefer weekends, and members' preference is consistent over the week", color="black", fontface="italic", size=3.5)
+
+bike_pref_viz+
+  labs(title="what type of rental bikes do users prefer?", caption = "Data Based on 'Sophisticated, Clear, and Polished': Divvy and Data Visualization written by Kevin Hartman" )+
+  annotate("text", x="docked_bike",y=1500000, label="                   Both user types prefer
+                     classic bike the most", color="black", fontface="italic", size=3.5)
+
+```
+
+
+
+
+
+
+#### **STEP 9:** Conclusion
+
+After the phases of analysis and visualization, we can conclude that:
+
+* Both user types prefer to ride the most during the evenings i.e. 4 to 7 PM.
+
+* Casual riders prefer weekends over weekdays, however Members use bike uniformly over the week, suggesting that most of the Casuals use bikes for their leisure whereas Members prefer to commute for work over the week using bikes.
+
+* Both user types prefer classic bikes over electric and docked, Members do not prefer docked bike at all, Casuals also prefer docked bike the least.
+
+Now, we can export our findings to analyze and visualize using different tools such as Tableau, Python and Spreadsheets.
+
+#### **STEP 10:** Export Data Sets
+```{r}
+write.csv(monthly_group,file="monthly_group.csv")
+write.csv(weekday_group,file="weekday_group.csv")
+write.csv(hourly_group,file="hourly_group.csv")
+write.csv(no_of_users,file="no_of_users.csv")
+write.csv(trips_df,file="final_trips_data.csv")
+
+```
+
